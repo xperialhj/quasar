@@ -1,1 +1,3 @@
-# quasar
+# Quasar App
+
+> WIP
