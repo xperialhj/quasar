@@ -9,7 +9,10 @@ const routes = [
   },
   {
     path: '/databaselink',
-    component: () => import('pages/DatabaseLink.vue'),
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/DatabaseLink.vue')}
+    ]
   }
 ]
 
