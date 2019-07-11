@@ -83,6 +83,8 @@ export default {
     return {
       selected: [],
       prompt: false,
+      model:null,
+      options:[],
       columns: [
         {
           name: "desc",
