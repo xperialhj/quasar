@@ -1,5 +1,5 @@
-import axios from 'axios'
+import service from './service'
 
 export default async ({ Vue }) => {
-  Vue.prototype.$axios = axios
+  Vue.prototype.$axios = service
 }

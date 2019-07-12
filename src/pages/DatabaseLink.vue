@@ -24,35 +24,98 @@
       v-model="prompt"
       persistent
     >
-      <q-card style="min-width: 400px">
+      <q-card style="min-width: 500px">
         <q-card-section>
           <div class="text-h6">新建连接</div>
         </q-card-section>
-
-        <q-card-section>
-          <q-select
-            v-model="model"
-            :options="options"
-            label="选择连接类型"
-          >
-          </q-select>
-        </q-card-section>
-        <q-card-section>
-          <q-select
-            v-model="model"
-            :options="options"
-            label="版本号"
-          >
-          </q-select>
-        </q-card-section>
-        <q-card-section>
-          <q-select
-            v-model="model"
-            :options="options"
-            label="选择连接方式"
-          >
-          </q-select>
-        </q-card-section>
+        <div class="row q-col-gutter-xs">
+          <div class="col-6">
+            <q-card-section>
+              <q-select
+                v-model="model"
+                :options="options"
+                label="选择连接类型"
+              >
+              </q-select>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-select
+                v-model="model"
+                :options="options"
+                label="版本号"
+              >
+              </q-select>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                type="text"
+                label="连接名称"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                type="text"
+                label="主机名称"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                type="text"
+                label="数据库名称"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                type="text"
+                label="端口号"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                type="text"
+                label="用户名"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="model"
+                :options="options"
+                label="密码"
+                type="text"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+        </div>
 
         <q-card-actions
           align="right"
@@ -83,8 +146,8 @@ export default {
     return {
       selected: [],
       prompt: false,
-      model:null,
-      options:[],
+      model: null,
+      options: [],
       columns: [
         {
           name: "desc",
@@ -175,5 +238,4 @@ export default {
 </script>
 
 <style  scoped>
-
 </style>

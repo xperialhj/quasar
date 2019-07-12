@@ -28,7 +28,10 @@
         </q-toolbar-title>
 
       </q-toolbar>
-      <l-menu-tab :menuTabList='menuTabList' @closeTab="closeTab"></l-menu-tab>
+      <l-menu-tab
+        :menuTabList='menuTabList'
+        @closeTab="closeTab"
+      ></l-menu-tab>
     </q-header>
 
     <q-drawer
@@ -74,23 +77,24 @@ export default {
   },
   methods: {
     openURL,
-    closeTab(row){
-      this.menuTabList=this.menuTabList.filter(item=>item.name!=row.name)
-      this.$router.push(this.menuTabList[this.menuTabList.length-1].path);
+    closeTab(row) {
+      this.menuTabList = this.menuTabList.filter(item => item.name != row.name);
+      this.$router.push(this.menuTabList[this.menuTabList.length - 1].path);
     },
-    addTab(row){
-        let tab={
-          name:row.name,
-          label:row.label,
-          path:row.path
-        }
-        if(!this.menuTabList.find((item)=>{
-          return item.name==tab.name
-        })){
-          this.menuTabList.push(tab);
-        }
-        this.$router.push(row.path);
-
+    addTab(row) {
+      let tab = {
+        name: row.name,
+        label: row.label,
+        path: row.path
+      };
+      if (
+        !this.menuTabList.find(item => {
+          return item.name == tab.name;
+        })
+      ) {
+        this.menuTabList.push(tab);
+      }
+      this.$router.push(row.path);
     }
   }
 };

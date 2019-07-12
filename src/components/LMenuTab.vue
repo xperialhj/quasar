@@ -15,7 +15,7 @@
     >
       <template v-if="item.name != 'home'">
         <q-btn
-          class="close-tab"
+          class="close-tab" 
           flat
           round
           icon="close"
@@ -75,6 +75,8 @@ export default {
 .close-tab {
   user-select: all;
   pointer-events: all;
+  position: absolute;
+  right:-15px;
 }
 </style>
 

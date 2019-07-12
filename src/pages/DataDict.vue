@@ -1,20 +1,122 @@
 <template>
-    <div class="q-pa-md">
-        <l-table title="字典表" :columns='columns' :data="data" :selected="selected"></l-table>
-    </div>
+  <div class="q-pa-md">
+    <l-table
+      title="字典表"
+      :columns='columns'
+      :data="data"
+      :selected="selected"
+      @openDialog="openDialog"
+    ></l-table>
+    <q-dialog
+      v-model="prompt"
+      persistent
+    >
+      <q-card style="min-width: 500px">
+        <q-card-section>
+          <div class="text-h6">新增字典信息</div>
+        </q-card-section>
+        <div class="row q-col-gutter-xs">
+
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="newDict.type"
+                :options="options"
+                type="text"
+                label="字典类型"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="newDict.label"
+                :options="options"
+                type="text"
+                label="字典标签"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="newDict.value"
+                :options="options"
+                type="text"
+                label="字典值"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-6">
+            <q-card-section>
+              <q-input
+                v-model="newDict.sort"
+                :options="options"
+                type="text"
+                label="排序"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+          <div class="col-12">
+            <q-card-section>
+              <q-input
+                v-model="newDict.description"
+                :options="options"
+                type="textarea"
+                label="描述"
+              >
+              </q-input>
+            </q-card-section>
+          </div>
+        </div>
+        <q-card-actions
+          align="right"
+          class="text-primary"
+        >
+          <q-btn
+            color="white"
+            text-color="black"
+            label="取消"
+            size='md'
+            v-close-popup
+          />
+          <q-btn
+            color="primary"
+            label="确定"
+            size='md'
+            v-close-popup
+          />
+
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 <script>
 import LTable from "../components/LTable";
+import * as dictApi from "../api/dict/dict";
 export default {
-    components:{
-        LTable
-    },
-    data() {
+  components: {
+    LTable
+  },
+  data() {
     return {
+      dictApi,
       selected: [],
       prompt: false,
-      model:null,
-      options:[],
+      newDict: {
+        type: "mysql_jar2driverName",
+        label: "mysql-connector-java-5.1.39",
+        value: "com.mysql.jdbc.Driver",
+        description: "mysql 驱动-驱动名称",
+        sort: 2,
+        del_flag: 0
+      },
+      options: [],
       columns: [
         {
           name: "desc",
@@ -61,99 +163,19 @@ export default {
           sodium: 87,
           calcium: "14%",
           iron: "1%"
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: "8%",
-          iron: "1%"
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: "6%",
-          iron: "7%"
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: "3%",
-          iron: "8%"
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: "7%",
-          iron: "16%"
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: "0%",
-          iron: "0%"
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: "0%",
-          iron: "2%"
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: "0%",
-          iron: "45%"
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: "2%",
-          iron: "22%"
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: "12%",
-          iron: "6%"
         }
       ]
     };
   },
-}
+  methods: {
+    openDialog() {
+      this.prompt = true;
+    }
+  },
+  mounted(){
+    this.dictApi.findPage().then(res=>{
+      console.log(res)
+    })
+  }
+};
 </script>

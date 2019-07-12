@@ -15,7 +15,7 @@
         round
         color="primary"
         icon="add"
-        @click="prompt = true"
+        @click="openDialog"
       />
     </template>
   </q-table>
@@ -56,6 +56,9 @@ export default {
     },
     getSelectedString() {
       return this.myselected.length === 0 ? "" : `已选${this.myselected.length}条`;
+    },
+    openDialog(){
+      this.$emit("openDialog");
     }
   }
 };
