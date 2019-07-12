@@ -5,7 +5,8 @@ const routes = [
     component: () => import('layouts/MyLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: '/databaselink', component: () => import('pages/DatabaseLink.vue')}
+      { path: '/databaselink', component: () => import('pages/DatabaseLink.vue')},
+      { path: '/datadict', component: () => import('pages/DataDict.vue')}
     ]
   },
  

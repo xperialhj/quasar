@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated style="background:#2f333e">
       <q-toolbar>
         <q-btn
           flat
@@ -24,7 +24,6 @@
           </q-btn>
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
       <q-tabs
         v-model="tab"
@@ -60,25 +59,43 @@
     </q-header>
 
     <q-drawer
+      :width="285"
       v-model="leftDrawerOpen"
       bordered
       content-class="bg-grey-2"
-    >
-      <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item
-          clickable
-          @click="$router.push('/databaselink')"
+    > 
+     <div class="logo-title">
+       FENHB
+     </div>
+      <q-list
+        bordered
+        class="rounded-borders"
+      >
+        <q-expansion-item
+          expand-separator
+          icon="perm_identity"
+          label="数据系统"
         >
-          <q-item-section avatar>
-            <q-icon name="playlist_add" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>数据库连接管理
-            </q-item-label>
-            <!-- <q-item-label caption>quasar.dev</q-item-label> -->
-          </q-item-section>
-        </q-item>
+          <q-item  class="menu-item"
+            clickable
+            @click="$router.push('/datadict')"
+          >
+            <q-item-section>
+              <q-item-label class="menu-item-label">字典表
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item  class="menu-item"
+            clickable
+            @click="$router.push('/databaselink')"
+          >
+            <q-item-section>
+              <q-item-label class="menu-item-label">数据库连接管理
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+        </q-expansion-item>
 
       </q-list>
     </q-drawer>
@@ -101,20 +118,41 @@ export default {
     };
   },
   methods: {
-    openURL,
-    test() {
-      alert();
-    }
+    openURL
   }
 };
 </script>
 
 <style>
 .nav-tabs .q-tabs__content--align-center {
-  justify-content: left;
+  justify-content: flex-start;
+  -ms-justify-content: flex-start;
 }
 .close-tab {
   user-select: all;
   pointer-events: all;
+}
+.menu-item-label {
+  text-align: center;
+}
+.menu-item{
+  border-left:4px solid transparent;
+}
+.menu-item:hover{
+  background:#76a6ef;
+  border-left:4px solid #4b77ba;
+  color:white;
+  transition: background .5s;
+}
+.logo-title{
+  background-color:#2f333e;
+  height:50px;
+  font-size:30px;
+  line-height: 50px;
+  text-align: center;
+  color:white;
+}
+.q-drawer{
+ border-right:none!important;
 }
 </style>

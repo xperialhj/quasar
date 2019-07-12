@@ -1,8 +1,8 @@
 {
-  "name": "quasar",
+  "name": "cecii-datapipes-ui",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Cecii Datapipes",
   "cordovaId": "org.cordova.quasar.app",
   "author": "LHJ <13607480121@163.com>",
   "private": true,
