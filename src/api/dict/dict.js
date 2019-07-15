@@ -1,4 +1,4 @@
-import service from "../../boot/service"
+import service from "../service"
 // 字典请求
 
 
@@ -11,9 +11,10 @@ export const save=(data)=>{
     })
 }
 //查询
-export const findPage=()=>{
+export const findPage=(data)=>{
     return service({
         url:"/dataDict/findPage",
-        method:"get",
+        method:"post",
+        data
     })
 }

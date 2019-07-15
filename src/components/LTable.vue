@@ -9,6 +9,9 @@
     :selected.sync="myselected"
     rows-per-page-label="每页记录"
     :pagination-label='paginationInfo'
+    :pagination.sync="pagination"
+    :loading="loading"
+    @request="onRequest"
   >
     <template v-slot:top-right>
       <q-btn
@@ -25,7 +28,13 @@ export default {
   name: "LTable",
   data() {
     return {
-      myselected: this.selected
+      myselected: this.selected,
+      loading: false,
+      pagination: {
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 10
+      }
     };
   },
   props: {
@@ -40,25 +49,53 @@ export default {
       default: function() {
         return [];
       }
-    } //已选项
+    }, //已选项
+    pageRequest: {
+      type: Object,
+      default: function() {
+        return {};
+      }
+    }
   },
   methods: {
     paginationInfo(firstRowIndex, endRowIndex, totalRowsNumber) {
       return (
         " 总计:" +
         totalRowsNumber +
-        "  第" +
+        "条  第" +
         firstRowIndex +
         "-" +
         endRowIndex +
         "条"
       );
     },
+
     getSelectedString() {
-      return this.myselected.length === 0 ? "" : `已选${this.myselected.length}条`;
+      return this.myselected.length === 0
+        ? ""
+        : `已选${this.myselected.length}条`;
     },
-    openDialog(){
+    openDialog() {
       this.$emit("openDialog");
+    },
+    onRequest(props) {
+      this.loading = true;
+      let callback = res => {
+        this.loading = false;
+      };
+      this.$emit("findPage", { pageRequest: props.pagination, callbak });
+    }
+  },
+  watch: {
+    pageRequest: {
+      handler(val, oldVal) {
+        this.pagination = {
+          page: val.pageNum,
+          rowsPerPage: val.pageSize,
+          rowsNumber: val.totalSize
+        };
+      },
+      deep: true
     }
   }
 };

@@ -5,7 +5,9 @@
       :columns='columns'
       :data="data"
       :selected="selected"
+      :pageRequest="pageRequest"
       @openDialog="openDialog"
+      @findPage="findPage"
     ></l-table>
     <q-dialog
       v-model="prompt"
@@ -98,16 +100,16 @@
 </template>
 <script>
 import LTable from "../components/LTable";
-import * as dictApi from "../api/dict/dict";
+// import * as dictApi from "../api/dict/dict";
 export default {
   components: {
     LTable
   },
   data() {
     return {
-      dictApi,
       selected: [],
       prompt: false,
+      pageRequest: {},
       newDict: {
         type: "mysql_jar2driverName",
         label: "mysql-connector-java-5.1.39",
@@ -119,63 +121,77 @@ export default {
       options: [],
       columns: [
         {
-          name: "desc",
+          name: "type",
           required: true,
-          label: "Dessert (100g serving)",
+          label: "字典类型",
           align: "left",
-          field: row => row.name,
-          format: val => `${val}`,
+          field: "type",
           sortable: true
         },
         {
-          name: "calories",
+          name: "label",
           align: "center",
-          label: "Calories",
-          field: "calories",
+          label: "字典标签",
+          field: "label",
           sortable: true
         },
-        { name: "fat", label: "Fat (g)", field: "fat", sortable: true },
-        { name: "carbs", label: "Carbs (g)", field: "carbs" },
-        { name: "protein", label: "Protein (g)", field: "protein" },
-        { name: "sodium", label: "Sodium (mg)", field: "sodium" },
         {
-          name: "calcium",
-          label: "Calcium (%)",
-          field: "calcium",
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
+          name: "value",
+          label: "字典值",
+          align: "center",
+          field: "value",
+          sortable: true
         },
         {
-          name: "iron",
-          label: "Iron (%)",
-          field: "iron",
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
+          name: "sort",
+          label: "排序",
+          align: "center",
+          field: "sort",
+          sortable: true
+        },
+        {
+          name: "description",
+          label: "描述",
+          align: "center",
+          field: "description"
         }
       ],
-      data: [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: "14%",
-          iron: "1%"
-        }
-      ]
+      data: []
     };
   },
   methods: {
     openDialog() {
       this.prompt = true;
+    },
+    async findPage(data) {
+      if (data) {
+        this.pageRequest = {
+          pageNum: data.pageRequest.page,
+          pageSize: data.pageRequest.rowsPerPage
+        };
+      }
+
+      let res = await this.$api.dict.findPage(this.pageRequest);
+      console.log(res);
+      let result = res.data.data;
+      this.data = result.content;
+      this.pageRequest = {
+        page: result.pageNum,
+        rowsPerPage: result.pageSize,
+        rowsNumber: result.totalSize
+      };
+      if (data) {
+        data.callback();
+      }
+     
     }
   },
-  mounted(){
-    this.dictApi.findPage().then(res=>{
-      console.log(res)
-    })
+  mounted() {
+    // let data = { pageNum: 1, pageSize: 10 };
+    // this.$api.dict.findPage(data).then(res => {
+    //   console.log(res);
+    // });
+    this.findPage();
   }
 };
 </script>
