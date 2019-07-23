@@ -91,6 +91,7 @@
             label="确定"
             size='md'
             v-close-popup
+            @click="addDict"
           />
 
         </q-card-actions>
@@ -100,7 +101,6 @@
 </template>
 <script>
 import LTable from "../components/LTable";
-// import * as dictApi from "../api/dict/dict";
 export default {
   components: {
     LTable
@@ -154,7 +154,8 @@ export default {
           label: "描述",
           align: "center",
           field: "description"
-        }
+        },
+        
       ],
       data: []
     };
@@ -164,34 +165,57 @@ export default {
       this.prompt = true;
     },
     async findPage(data) {
+      let sortBy = null;
+      let descending = false;
+      let pageRequest = {};
       if (data) {
-        this.pageRequest = {
+        sortBy = data.pageRequest.sortBy;
+        descending = data.pageRequest.descending;
+        pageRequest = {
           pageNum: data.pageRequest.page,
-          pageSize: data.pageRequest.rowsPerPage
+          pageSize: data.pageRequest.rowsPerPage,
+          record:{
+            type:'1',
+            sort:'2'
+          }
         };
       }
 
-      let res = await this.$api.dict.findPage(this.pageRequest);
-      console.log(res);
+      let res = await this.$api.dict.findPage(pageRequest);
+      // console.log(res);
       let result = res.data.data;
       this.data = result.content;
       this.pageRequest = {
         page: result.pageNum,
         rowsPerPage: result.pageSize,
-        rowsNumber: result.totalSize
+        rowsNumber: result.totalSize,
+        sortBy,
+        descending
       };
+
+      console.log(this.pageRequest);
+      if (sortBy) {
+        this.data.sort((a, b) => {
+          let x = descending ? b : a;
+          let y = descending ? a : b;
+          if (sortBy !== "sort") {
+            // string sort
+            return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
+          } else {
+            // numeric sort
+            return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+          }
+        });
+      }
       if (data) {
         data.callback();
       }
-     
+    },
+    async addDict() {
+      await this.$api.dict.save(this.newDict);
+      await this.findPage();
     }
   },
-  mounted() {
-    // let data = { pageNum: 1, pageSize: 10 };
-    // this.$api.dict.findPage(data).then(res => {
-    //   console.log(res);
-    // });
-    this.findPage();
-  }
+  mounted() {}
 };
 </script>

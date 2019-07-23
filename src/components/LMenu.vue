@@ -37,6 +37,16 @@ export default {
             name:"databaselink",
             label:"数据库连接管理",
             path:"/databaselink"
+          },
+          {
+            name:"datadriverinfo",
+            label:"数据库驱动信息",
+            path:"/datadriverinfo"
+          },
+          {
+            name:"createtransition",
+            label:"新建转换",
+            path:"/createtransition"
           }
         ]
       }
@@ -52,7 +62,8 @@ export default {
 .menu-item {
   border-left: 4px solid transparent;
   .menu-item-label {
-    text-align: center;
+    text-align: left;
+    padding-left:50px;
   }
 }
 .menu-item:hover {
@@ -61,4 +72,5 @@ export default {
   color: white;
   transition: background 0.5s;
 }
+
 </style>

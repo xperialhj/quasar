@@ -1,25 +1,14 @@
 <template>
   <div class="q-pa-md">
-    <q-table
+    <l-table
       title="数据库连接管理"
+      :columns='columns'
       :data="data"
-      :columns="columns"
-      row-key="name"
-      :selected-rows-label="getSelectedString"
-      selection="multiple"
-      :selected.sync="selected"
-      rows-per-page-label="每页记录"
-      :pagination-label='paginationInfo'
-    >
-      <template v-slot:top-right>
-        <q-btn
-          round
-          color="primary"
-          icon="add"
-          @click="prompt = true"
-        />
-      </template>
-    </q-table>
+      :selected="selected"
+      :pageRequest="pageRequest"
+      @openDialog="openDialog"
+      @findPage="findPage"
+    ></l-table>
     <q-dialog
       v-model="prompt"
       persistent
@@ -32,8 +21,10 @@
           <div class="col-6">
             <q-card-section>
               <q-select
-                v-model="model"
-                :options="options"
+                v-model="newLink.type"
+                :options="options.type"
+                option-value="key"
+                option-label="value"
                 label="选择连接类型"
               >
               </q-select>
@@ -42,7 +33,7 @@
           <div class="col-6">
             <q-card-section>
               <q-select
-                v-model="model"
+                v-model="newLink.version"
                 :options="options"
                 label="版本号"
               >
@@ -141,97 +132,128 @@
   </div>
 </template>
 <script>
+import LTable from "../components/LTable";
 export default {
+  components: {
+    LTable
+  },
   data() {
     return {
       selected: [],
       prompt: false,
+      pageRequest: {},
+      options: {
+        type: [],
+        version: []
+      },
+      newLink: {
+        type: "",
+        version: ""
+      },
       model: null,
       options: [],
       columns: [
         {
-          name: "desc",
-          required: true,
-          label: "Dessert (100g serving)",
+          name: "databaseName",
           align: "left",
-          field: row => row.name,
-          format: val => `${val}`,
+          label: "数据库名",
+          field: "databaseName",
           sortable: true
         },
         {
-          name: "calories",
-          align: "center",
-          label: "Calories",
-          field: "calories",
+          name: "id",
+          align: "left",
+          label: "ID",
+          field: "id",
           sortable: true
         },
-        { name: "fat", label: "Fat (g)", field: "fat", sortable: true },
-        { name: "carbs", label: "Carbs (g)", field: "carbs" },
-        { name: "protein", label: "Protein (g)", field: "protein" },
-        { name: "sodium", label: "Sodium (mg)", field: "sodium" },
-        {
-          name: "calcium",
-          label: "Calcium (%)",
-          field: "calcium",
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
-        },
-        {
-          name: "iron",
-          label: "Iron (%)",
-          field: "iron",
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
-        }
       ],
-      data: [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: "14%",
-          iron: "1%"
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: "8%",
-          iron: "1%"
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: "6%",
-          iron: "7%"
-        }
-      ]
+      data: []
     };
   },
   methods: {
-    paginationInfo(firstRowIndex, endRowIndex, totalRowsNumber) {
-      return (
-        " 总计:" +
-        totalRowsNumber +
-        "  第" +
-        firstRowIndex +
-        "-" +
-        endRowIndex +
-        "条"
-      );
+    openDialog() {
+      this.prompt = true;
     },
-    getSelectedString() {
-      return this.selected.length === 0 ? "" : `已选${this.selected.length}条`;
+    alertErr(err) {
+       this.$q.notify({
+        message: err,
+        color: 'red',
+        position:'top'
+      })
+    },
+    async findPage(data) {
+      let sortBy = null;
+      let descending = false;
+      let pageRequest = {};
+      if (data) {
+        sortBy = data.pageRequest.sortBy;
+        descending = data.pageRequest.descending;
+        pageRequest = {
+          pageNum: data.pageRequest.page,
+          pageSize: data.pageRequest.rowsPerPage
+        };
+      }
+
+      let res = await this.$api.databaseLink.findPage(pageRequest);
+      console.log(res);
+      let result = res.data.data;
+      this.data = result.content;
+      this.pageRequest = {
+        page: result.pageNum,
+        rowsPerPage: result.pageSize,
+        rowsNumber: result.totalSize,
+        sortBy,
+        descending
+      };
+
+      console.log(this.pageRequest);
+      if (sortBy) {
+        this.data.sort((a, b) => {
+          let x = descending ? b : a;
+          let y = descending ? a : b;
+          if (sortBy !== "sort") {
+            // string sort
+            return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
+          } else {
+            // numeric sort
+            return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+          }
+        });
+      }
+      if (data) {
+        data.callback();
+      }
+    },
+    async getType() {
+      try {
+        let res = await this.$api.databaseLink.getType();
+        this.options.type = res.data.data;
+      } catch (err) {
+        console.log(err);
+        this.alertErr("获取连接类型失败");
+      }
+    },
+    async getVersion(val) {
+      try {
+        let res = await this.$api.databaseLink.getVersion({ dbType: val });
+        console.log(res);
+        this.options.version = res.data.data;
+      } catch (err) {
+        console.log(err);
+        this.alertErr("获取版本号失败");
+      }
+    }
+  },
+  mounted() {
+    this.getType();
+  },
+  watch: {
+    "newLink.type": {
+      handler(val, oldVal) {
+        this.getVersion(val.value);
+      },
+      deep: true
     }
   }
 };
