@@ -75,8 +75,8 @@ export default {
 .close-tab {
   user-select: all;
   pointer-events: all;
-  position: absolute;
-  right:-15px;
+  // position: absolute;
+  // right:-15px;
 }
 </style>
 
