@@ -44,10 +44,15 @@ export default {
             path:"/datadriverinfo"
           },
           {
-            name:"createtransition",
-            label:"新建转换",
-            path:"/createtransition"
-          }
+            name:"createTask",
+            label:"新建作业",
+            path:"/createTask"
+          },
+          // {
+          //   name:"createtransition",
+          //   label:"新建转换",
+          //   path:"/createtransition"
+          // }
         ]
       }
     },

@@ -29,7 +29,7 @@
 
       </q-toolbar>
       <l-menu-tab
-        :menuTabList='menuTabList'
+        :menuTabList='this.$store.state.menuTabList'
         @closeTab="closeTab"
       ></l-menu-tab>
     </q-header>
@@ -61,14 +61,14 @@ export default {
   name: "MyLayout",
   data() {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop,
-      menuTabList: [
-        {
-          name: "home",
-          label: "首页",
-          path: "/"
-        }
-      ]
+      leftDrawerOpen: this.$q.platform.is.desktop
+      // menuTabList: [
+      //   {
+      //     name: "home",
+      //     label: "首页",
+      //     path: "/"
+      //   }
+      // ]
     };
   },
   components: {
@@ -78,8 +78,12 @@ export default {
   methods: {
     openURL,
     closeTab(row) {
-      this.menuTabList = this.menuTabList.filter(item => item.name != row.name);
-      this.$router.push(this.menuTabList[this.menuTabList.length - 1].path);
+      // this.$store.state.menuTabList = this.$store.state.menuTabList.filter(item => item.name != row.name);
+      this.$store.commit("closeTab", row);
+      this.$router.push(
+        this.$store.state.menuTabList[this.$store.state.menuTabList.length - 1]
+          .path
+      );
     },
     addTab(row) {
       let tab = {
@@ -88,11 +92,12 @@ export default {
         path: row.path
       };
       if (
-        !this.menuTabList.find(item => {
+        !this.$store.state.menuTabList.find(item => {
           return item.name == tab.name;
         })
       ) {
-        this.menuTabList.push(tab);
+        this.$store.commit("addTab", tab);
+        // this.$store.state.menuTabList.push(tab);
       }
       this.$router.push(row.path);
     }

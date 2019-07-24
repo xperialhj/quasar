@@ -8,7 +8,7 @@ const routes = [
       { path: '/databaselink', component: () => import('pages/DatabaseLink.vue')},
       { path: '/datadict', component: () => import('pages/DataDict.vue')},
       { path: '/datadriverinfo', component: () => import('pages/DataDriverInfo.vue')},
-      { path: '/createtransition', component: () => import('pages/CreateTransition.vue')},
+      { path: '/createtask', component: () => import('pages/CreateTask.vue')},
       
     ]
   },
