@@ -77,6 +77,7 @@
               v-for="element in list2"
               :key="element.id"
               :id="'node'+element.id"
+              :style="'left:'+element.position.x+';top:'+element.position.y"
               @dblclick.native="optionsDialog=true"
             >
               <q-avatar
@@ -206,10 +207,14 @@ export default {
       idGlobal: 0,
       taskMenu: [],
       list1: [{ name: "Excel输入", id: 1 }, { name: "表输入", id: 2 }],
-      list2: [{ id: 0, text: "START" }, { id: 1, text: "DUMMY" }],
+      list2: [
+        { id: 0, text: "START", position: { x: "50px", y: "50px" } },
+        { id: 1, text: "DUMMY", position: { x: "100px", y: "150px" } }
+      ],
       optionsDialog: false,
       maximizedToggle: true,
-      lineData: [{ source: "node0", target: "node1" }]
+      lineData: [{ source: "node0", target: "node1" }],
+      newNodeId: null
     };
   },
   methods: {
@@ -233,23 +238,27 @@ export default {
     cloneDog({ text }) {
       return {
         id: this.idGlobal++,
-        text
+        text,
+        position: { x: "0", y: "0" }
       };
     },
     end(evt) {
-      console.log(evt.originalEvent);
-      // evt.item; //可以知道拖动的本身
-      // evt.to; // 可以知道拖动的目标列表
-      // evt.from; // 可以知道之前的列表
-      // evt.oldIndex; // 可以知道拖动前的位置
-      // evt.newIndex; // 可以知道拖动后的位置
-      let newNode = document.getElementById(this.newNodeId);
-      console.log(newNode.style);
-      newNode.style.left = evt.originalEvent.offsetX + "px";
-      newNode.style.top = evt.originalEvent.offsetY + "px";
-      this.$nextTick(() => {
-        this.j.setSuspendDrawing(false, true);
-      });
+      if (this.newNodeId) {
+        console.log(evt.originalEvent);
+        // evt.item; //可以知道拖动的本身
+        // evt.to; // 可以知道拖动的目标列表
+        // evt.from; // 可以知道之前的列表
+        // evt.oldIndex; // 可以知道拖动前的位置
+        // evt.newIndex; // 可以知道拖动后的位置
+        let newNode = document.getElementById(this.newNodeId);
+        console.log(newNode.style);
+        newNode.style.left = evt.originalEvent.offsetX + "px";
+        newNode.style.top = evt.originalEvent.offsetY + "px";
+        this.$nextTick(() => {
+          this.j.setSuspendDrawing(false, true);
+        });
+        this.newNodeId = null;
+      }
     },
     cancleCreate() {
       this.$store.commit("closeTab", { name: "createTask" });
@@ -295,10 +304,10 @@ export default {
       jsPlumb.ready(() => {
         var j = jsPlumb.getInstance({
           DragOptions: { cursor: "pointer", zIndex: 2000 },
-          PaintStyle: { stroke: "red", strokeWidth: 3 }, //配置自己拖拽小点的时候连接线的默认样式
-          Endpoint: ["Dot", { radius: 5 }], //这个是控制连线终端那个小点的半径
-          EndpointStyle: { fill: "red" }, //这个是控制连线终端那个小点的样式
-          EndpointHoverStyle: { fill: "blue" }, //这个是控制连线终端那个小点的样式
+          PaintStyle: { stroke: "gray", strokeWidth: 3 }, //配置自己拖拽小点的时候连接线的默认样式
+          Endpoint: ["Dot", { radius: 6 }], //这个是控制连线终端那个小点的半径
+          EndpointStyle: { fill: "gray" }, //这个是控制连线终端那个小点的样式
+          EndpointHoverStyle: { fill: "green" }, //这个是控制连线终端那个小点的样式
           Connector: ["Flowchart", { curviness: 70 }],
           ConnectionOverlays: [
             ["Arrow", { location: 1 }],
@@ -321,7 +330,7 @@ export default {
           isSource: true,
           isTarget: true,
           maxConnections: -1,
-          connector: "Flowchart"
+          connector: "Bezier"
         };
         this.list2.forEach(el => {
           this.j.draggable(document.getElementById("node" + el.id), {
@@ -379,16 +388,16 @@ export default {
         });
       });
     });
-   
+
     this.getAllTaskGroup();
   },
   watch: {
     taskNameShow: {
       handler(val, oldVal) {
-        if(!val)
-        this.$nextTick(() => {
-           this.j.repaintEverything();
-        });
+        if (!val)
+          this.$nextTick(() => {
+            this.j.repaintEverything();
+          });
       },
       deep: true
     }
